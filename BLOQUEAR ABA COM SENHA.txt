@@ -1,0 +1,12 @@
+Sub Acesso() 'atribua esta macro ao botao ou hiperlink desejado
+Dim Senha As String
+Senha = InputBox("Digite a Senha Para Acessar Este Módulo", ":: Acesso::")
+If Senha = "SENHA" Then
+Sheets("NOME DA ABA").Visible = -1  'libera a a planilha
+Sheets("NOME DA ABA").Select 'se acertar a senha, seleciona a aba antes oculta
+MsgBox "Acesso Concedido!", vbInformation, "Aviso"
+Else
+Sheets("Menu_BG").Visible = 2 'oculta a planilha para ngm acessar
+MsgBox "Acesso Negado!", vbInformation, "Aviso"
+End If
+End Sub

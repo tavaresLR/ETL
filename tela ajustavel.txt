@@ -1,0 +1,24 @@
+'COLAR NO CÓDIGO DE CADA OBJETO (PLAN)
+Private Sub Worksheet_Activate()
+Dim rngSelection    As Range
+Dim lRow            As Long
+Dim lCol            As Long
+    
+    If TypeName(Selection) = "Range" Then Set rngSelection = Selection
+    With ActiveWindow
+        lRow = .ScrollRow
+        lCol = .ScrollColumn
+        .ScrollRow = 1
+        .ScrollColumn = 1
+        ActiveSheet.Range("A:N").Select 'AJUSTAR PARA O RANGE DA TELA, SENDO SÓ COLUNAS OU INTERVALO DIRETO
+        .Zoom = True
+        .ScrollRow = lRow
+        .ScrollColumn = lCol
+    End With
+    
+    If Not rngSelection Is Nothing Then
+        rngSelection.Select
+        Set rngSelection = Nothing
+    End If
+    
+End Sub

@@ -1,0 +1,30 @@
+Sub Importar()
+
+    Dim DestBook As Workbook, SourceBook As Workbook
+    Dim DestCell As Range
+    Dim RetVal As Boolean
+    ' Turn off screen updating.
+    Application.ScreenUpdating = False
+    ' Set object variables for the active book and active cell.
+    Set DestBook = ActiveWorkbook
+    Range("A1").Activate
+    Set DestCell = ActiveCell
+    ' Show the Open dialog box.
+    RetVal = Application.Dialogs(xlDialogOpen).Show("*.xls")
+    ' If Retval is false (Open dialog canceled), exit the procedure.
+    If RetVal = False Then Exit Sub
+    ' Set an object variable for the workbook containing the text file.
+    Set SourceBook = ActiveWorkbook
+    ' Copy the contents of the entire sheet containing the text file.
+    Plan1.Activate
+    Range(Range("A1"), Range("A1").SpecialCells(xlLastCell)).Copy
+    ' Activate the destination orkbook and paste special the values
+    ' from the text file.
+    DestBook.Activate
+    DestCell.PasteSpecial Paste:=xlValues
+    ' Close the book containing the text file.
+    SourceBook.Close False
+    Application.ScreenUpdating = True
+
+End Sub
+

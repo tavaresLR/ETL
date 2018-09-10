@@ -1,0 +1,20 @@
+Sub gravarPDF()
+'
+' Macro para gravar PDF
+'
+
+'Esta macro grava a planilha atual, gerando um arquivo PDF.
+
+    destino = "O:\RH Corporativo\DESENVOLVIMENTO ORGANIZACIONAL\Treinamento e Desenvolvimento\Gestão do Desempenho\LUCIANO\PDF"
+    'Local onde será gravado o arquivo
+    'Código que realiza a gravação.
+    'no parâmetro Filename:= temos o destino definido na variável acima e o nome
+'do arquivo.
+    'Range("B1") que refere-se a célula B1 da planilha atual, nela deve conter
+'o nome. Se precisar mudar o endereço basta alterar o "B1" pela
+'referência desejada.
+'Se precisar do nome da planilha no lugar da célula B1 mude Range("B1").Value por ActiveSheet.Name
+    ActiveSheet.Range("B5:K42").ExportAsFixedFormat Type:=xlTypePDF, Filename:=destino & Range("D6").Value & " - " & Range("D10") & ".pdf", Quality:=xlQualityStandard, _
+        IncludeDocProperties:=True, IgnorePrintAreas:=False, OpenAfterPublish:= _
+        False
+End Sub

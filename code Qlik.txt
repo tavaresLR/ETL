@@ -1,0 +1,93 @@
+-- Mapping QLIK -- 
+
+Benefícios:
+LOAD
+   'Assistência Médica'		As [Tipo de Benefício],
+    BENEFICIOS         		As Cargo,
+    BENEFICIOS         		As POSIÇÃO,
+    AM						As Valor,
+    AM_REAJ					As [Valor Ajustado]
+ FROM [lib://ORÇAMENTO/teste_orc.xlsx]	
+(ooxml, embedded labels, table is Beneficios);
+
+
+Benefícios:
+LOAD
+   'Seguro de Vida'			As [Tipo de Benefício],
+    BENEFICIOS         		As Cargo,
+    BENEFICIOS         		As POSIÇÃO,
+    SV						As Valor,
+    SV_REAJ					As [Valor Ajustado]
+ FROM [lib://ORÇAMENTO/teste_orc.xlsx]	
+(ooxml, embedded labels, table is Beneficios);
+
+
+MAPP_AM:
+Mapping LOAD
+    POSIÇÃO As Mapp_PosiçãoAM,
+   	Valor As Mapp_ValorAM
+   
+   Resident Benefícios where [Tipo de Benefício] = 'Assistência Médica';
+   
+MAPP_SV:
+Mapping LOAD
+    POSIÇÃO As Mapp_PosiçãoSV,
+   	Valor As Mapp_ValorSV
+   
+   Resident Benefícios where [Tipo de Benefício] = 'Seguro de Vida';
+   
+   ***********************************
+   
+   DADOSAUX:
+LOAD
+    "COD EMPRESA",
+    MATRICULA,
+    NOME,
+    "DATA ADMISSÃO",
+    STATUS,
+    "TIPO CONTRATO",
+    LOCALIDADE,
+    "TEMPO EMPRESA",
+    "DESC CARGO",
+    POSIÇÃO,
+    "REPORT FRANÇA",
+    AREA,
+    "DESC CENTRO DE CUSTO",
+    "CENTRO DE CUSTO",
+    REMUNERAÇÃO,
+    REMUNERAÇÃO*$(vINSS)								As INSS,
+    REMUNERAÇÃO*$(vFGTS)								As FGTS,
+    REMUNERAÇÃO*$(vPROV_FERIAS)							As [PROVISÃO FÉRIAS],
+    REMUNERAÇÃO*$(vPROV_13)								As [PROVISÃO 13o],
+    REMUNERAÇÃO*$(vPROV_INSS_FGTS)						As [PROVISÃO INSS E FGTS],
+    $(vVR)												As VR,
+    ApplyMap('MAPP_AM',[POSIÇÃO],'Erro')				As [Assistência Médica],
+    ApplyMap('MAPP_SV',[POSIÇÃO],'Erro')				As [Seguro de Vida],  
+    $(vGOODCARD)										As GoodCard
+        
+FROM [lib://ORÇAMENTO/teste_orc.xlsx]
+(ooxml, embedded labels, table is Dados);
+
+DADOS:
+LOAD 
+  *,
+    INSS+FGTS+[PROVISÃO FÉRIAS]+[PROVISÃO 13o]+[PROVISÃO INSS E FGTS]+VR+[Assistência Médica]+[Seguro de Vida]+GoodCard
+    													As [CUSTO TOTAL]
+RESIDENT DADOSAUX;
+DROP TABLE DADOSAUX;
+
+
+// STORE DADOS INTO DADOS_$(vPeriodo).qvd;
+
+******************************************
+
+
+Set vINSS = 2.68;
+Set vFGTS = 0.08;
+Set vPROV_FERIAS = 0.1111;
+Set vPROV_13 = 0.0833;
+Set vPROV_INSS_FGTS = 3.48;	
+SET vVR = 462;
+SET vGOODCARD = 0.75;
+
+// Let vPeriodo = YEAR(DADOS)&MID(TODAY(),4,2);
